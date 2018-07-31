@@ -1,8 +1,10 @@
 package com.chihayastudio.shinyproject.service
 
 import android.app.*
+import android.content.ComponentName
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -11,14 +13,16 @@ import com.chihayastudio.shinyproject.manager.FloatManager
 
 
 class FloatService : Service() {
+    var float: FloatManager? = null
+
     override fun onBind(intent: Intent?): IBinder {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onCreate() {
+        super.onCreate()
         val context = applicationContext
-
-        FloatManager(
+        float = FloatManager(
                 context,
                 object : FloatManager.GetViewCallback {
                     override fun dragingLogoViewOffset(smallView: View, isDraging: Boolean, isResetPosition: Boolean, offset: Float) {
@@ -50,8 +54,8 @@ class FloatService : Service() {
                         logoView.scaleY = 1f
                     }
                 }
-        ).show()
-        return super.onStartCommand(intent, flags, startId)
+        )
+        float!!.show()
     }
 
     private fun dip2px(dipValue: Float): Int {
@@ -59,4 +63,8 @@ class FloatService : Service() {
         return (dipValue * scale + 0.5f).toInt()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        stopSelf()
+    }
 }
