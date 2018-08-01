@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,8 +76,10 @@ class MainFragment : Fragment() {
         val intent = Intent(context, FloatService::class.java)
         // Serviceの開始
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context!!.stopService(intent)
             context!!.startForegroundService(intent)
         }else{
+            context!!.stopService(intent)
             context!!.startService(intent)
         }
     }

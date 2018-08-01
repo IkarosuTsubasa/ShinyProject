@@ -19,8 +19,7 @@ class FloatService : Service() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val context = applicationContext
         float = FloatManager(
                 context,
@@ -44,7 +43,6 @@ class FloatService : Service() {
                     }
 
                     override fun onDestoryed() {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
 
                     override fun resetLogoViewSize(hintLocation: Int, logoView: View) {
@@ -56,6 +54,8 @@ class FloatService : Service() {
                 }
         )
         float!!.show()
+
+        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun dip2px(dipValue: Float): Int {
@@ -65,6 +65,7 @@ class FloatService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopSelf()
+        float!!.destoryFloat()
+        this.stopSelf()
     }
 }
