@@ -1,10 +1,8 @@
 package com.chihayastudio.shinyproject.service
 
 import android.app.*
-import android.content.ComponentName
 import android.content.Intent
 import android.os.IBinder
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
