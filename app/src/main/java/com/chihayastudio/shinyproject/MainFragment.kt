@@ -57,6 +57,7 @@ class MainFragment : Fragment() {
         startButton = view.findViewById(R.id.start_button)
         startButton.setOnClickListener {
             startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), REQUEST_MEDIA_PROJECTION)
+            (context!!.applicationContext as ShotApplication).mediaProjectionManager = mMediaProjectionManager
         }
     }
 
