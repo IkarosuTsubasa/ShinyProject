@@ -58,7 +58,7 @@ class FloatService : Service() {
 
     private lateinit var mFloatLayout: View
     private lateinit var wmParams: WindowManager.LayoutParams
-    private lateinit var mWindowManager: WindowManager
+    private var mWindowManager: WindowManager? = null
     private lateinit var layoutInflater: LayoutInflater
     private lateinit var mFloatView: ImageButton
 
@@ -143,7 +143,7 @@ class FloatService : Service() {
         layoutInflater = LayoutInflater.from(this)
 
         mFloatLayout = layoutInflater.inflate(R.layout.float_layout, null)
-        mWindowManager.addView(mFloatLayout, wmParams)
+        mWindowManager?.addView(mFloatLayout, wmParams)
         mFloatView = mFloatLayout.findViewById(R.id.float_id) as ImageButton
 
         mFloatLayout.measure(View.MeasureSpec.makeMeasureSpec(0,
@@ -153,7 +153,7 @@ class FloatService : Service() {
         mFloatView.setOnTouchListener { _, event ->
             wmParams.x = event.rawX.toInt() - mFloatView.measuredWidth / 2
             wmParams.y = event.rawY.toInt() - mFloatView.measuredHeight / 2 - 25
-            mWindowManager.updateViewLayout(mFloatLayout, wmParams)
+            mWindowManager?.updateViewLayout(mFloatLayout, wmParams)
             false
         }
 
@@ -288,7 +288,7 @@ class FloatService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mWindowManager.removeView(mFloatLayout)
+        mWindowManager?.removeView(mFloatLayout)
         tearDownMediaProjection()
         Log.i(TAG, "application destroy")
     }
