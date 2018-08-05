@@ -194,8 +194,18 @@ class FloatService : Service() {
         Log.i(TAG, "image data captured")
 
         if (bitmap != null) {
+
+            var imageWidth = bitmap.width
+            var imageHeight = bitmap.height
+            val nWidth = (imageWidth * 0.23f).toInt()
+            val nHeight = (imageHeight * 0.20f).toInt()
+            val startX = (imageWidth - nWidth) / 2
+            val startY = (imageHeight* 0.14).toInt()
+
+            bitmap = Bitmap.createBitmap(bitmap, startX, startY, nWidth, nHeight, null, true)
+
             var DATA_PATH = applicationContext.filesDir.toString()
-            Log.d("DATA_PATH",DATA_PATH)
+            Log.d("DATA_PATH", DATA_PATH)
             val baseApi = TessBaseAPI()
             baseApi.init(DATA_PATH, LANG)
             baseApi.setImage(bitmap)
