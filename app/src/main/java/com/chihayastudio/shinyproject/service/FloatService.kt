@@ -12,6 +12,7 @@ import android.view.*
 import android.widget.ImageButton
 import com.chihayastudio.shinyproject.R
 import android.graphics.Bitmap
+import android.graphics.Point
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
@@ -20,9 +21,11 @@ import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.support.constraint.ConstraintLayout
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.view.LayoutInflater
+import android.widget.TextView
 import com.chihayastudio.shinyproject.ShotApplication
 import java.io.File
 import java.io.FileNotFoundException
@@ -67,12 +70,35 @@ class FloatService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        createNotification(intent!!)
         createFloatView()
-
         createVirtualEnvironment()
         return super.onStartCommand(intent, flags, startId)
     }
 
+    private fun createNotification(intent: Intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val context = applicationContext
+            val channelId = "shiny"
+            val title = context.getString(R.string.app_name)
+
+            var pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            var channel = NotificationChannel(channelId, title, NotificationManager.IMPORTANCE_DEFAULT)
+
+            notificationManager.createNotificationChannel(channel)
+            var notification = Notification.Builder(context, channelId)
+                    .setContentTitle(title)
+                    .setSmallIcon(R.drawable.ic_stat_name)
+                    .setContentText("シャニマススキャンが動いてる")
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .setWhen(System.currentTimeMillis())
+                    .build()
+
+            startForeground(283, notification)
+        }
+    }
 
     private fun createVirtualEnvironment() {
         dateFormat = SimpleDateFormat("yyyy_MM_dd_hh_mm_ss")
@@ -81,8 +107,13 @@ class FloatService : Service() {
         nameImage = "shiny.png"
         mMediaProjectionManager1 = application.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         mWindowManager1 = application.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowWidth = mWindowManager1.defaultDisplay.width
-        windowHeight = mWindowManager1.defaultDisplay.height
+        var disp = mWindowManager1.defaultDisplay
+        val size = Point()
+        disp.getSize(size)
+
+        windowHeight = size.x
+        windowWidth = size.y
+
         metrics = DisplayMetrics()
         mWindowManager1.defaultDisplay.getMetrics(metrics)
         mScreenDensity = metrics.densityDpi
@@ -126,7 +157,7 @@ class FloatService : Service() {
             false
         }
 
-        mFloatView.setOnClickListener(View.OnClickListener {
+        mFloatView.setOnClickListener {
             // hide the button
             mFloatView.visibility = View.INVISIBLE
 
@@ -145,7 +176,7 @@ class FloatService : Service() {
                     }, 500)
                 }, 500)
             }, 500)
-        })
+        }
     }
 
     private fun startVirtual() {
@@ -197,7 +228,7 @@ class FloatService : Service() {
 
             var imageWidth = bitmap.width
             var imageHeight = bitmap.height
-            val nWidth = (imageWidth * 0.23f).toInt()
+            val nWidth = (imageWidth * 0.22f).toInt()
             val nHeight = (imageHeight * 0.20f).toInt()
             val startX = (imageWidth - nWidth) / 2
             val startY = (imageHeight * 0.14).toInt()
@@ -214,27 +245,27 @@ class FloatService : Service() {
 
             Log.d("recognizedText", recognizedText)
 
-            try {
-                val fileImage = File(nameImage)
-                if (!fileImage.exists()) {
-                    fileImage.createNewFile()
-                    Log.i(TAG, "image file created")
-                }
-                val out = FileOutputStream(fileImage)
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-                    out.flush()
-                    out.close()
-                    val media = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-                    val contentUri = Uri.fromFile(fileImage)
-                    media.data = contentUri
-                    this.sendBroadcast(media)
-                    Log.i(TAG, "screen image saved")
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
+//            try {
+//                val fileImage = File(nameImage)
+//                if (!fileImage.exists()) {
+//                    fileImage.createNewFile()
+//                    Log.i(TAG, "image file created")
+//                }
+//                val out = FileOutputStream(fileImage)
+//                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+//                out.flush()
+//                out.close()
+//                val media = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+//                val contentUri = Uri.fromFile(fileImage)
+//                media.data = contentUri
+//                this.sendBroadcast(media)
+//                Log.i(TAG, "screen image saved")
+//            } catch (e: FileNotFoundException) {
+//                e.printStackTrace()
+//            } catch (e: IOException) {
+//                e.printStackTrace()
+//            }
+//
         }
     }
 
