@@ -200,7 +200,7 @@ class FloatService : Service() {
             val nWidth = (imageWidth * 0.23f).toInt()
             val nHeight = (imageHeight * 0.20f).toInt()
             val startX = (imageWidth - nWidth) / 2
-            val startY = (imageHeight* 0.14).toInt()
+            val startY = (imageHeight * 0.14).toInt()
 
             bitmap = Bitmap.createBitmap(bitmap, startX, startY, nWidth, nHeight, null, true)
 
@@ -221,7 +221,6 @@ class FloatService : Service() {
                     Log.i(TAG, "image file created")
                 }
                 val out = FileOutputStream(fileImage)
-                if (out != null) {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
                     out.flush()
                     out.close()
@@ -230,7 +229,6 @@ class FloatService : Service() {
                     media.data = contentUri
                     this.sendBroadcast(media)
                     Log.i(TAG, "screen image saved")
-                }
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             } catch (e: IOException) {
@@ -259,9 +257,7 @@ class FloatService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mFloatLayout != null) {
-            mWindowManager.removeView(mFloatLayout)
-        }
+        mWindowManager.removeView(mFloatLayout)
         tearDownMediaProjection()
         Log.i(TAG, "application destroy")
     }
