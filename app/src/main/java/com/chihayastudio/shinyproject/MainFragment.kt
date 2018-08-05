@@ -13,6 +13,10 @@ import android.util.Log
 import com.chihayastudio.shinyproject.service.FloatService
 import android.media.projection.MediaProjectionManager
 import android.view.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 class MainFragment : Fragment() {
@@ -27,10 +31,15 @@ class MainFragment : Fragment() {
     private lateinit var checkPermissionButton: View
     private lateinit var startButton: View
 
+    private val LANG = "jpn"
+    private val TESS_DATA_DIR = "tessdata" + File.separator
+    private val TESS_TRAINED_DATA = "$LANG.traineddata"
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
 
         handler = Handler()
+        checkTrainedData(context!!)
         mMediaProjectionManager = context!!.applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
 
         return inflater.inflate(R.layout.fragment_main, container, false)
@@ -94,6 +103,50 @@ class MainFragment : Fragment() {
     override fun onDestroy() {
         stopService()
         super.onDestroy()
+    }
+
+    private fun checkTrainedData(context: Context) {
+        val dataPath = context.filesDir.toString() + File.separator + TESS_DATA_DIR
+        val dir = File(dataPath)
+        if (!dir.exists() && dir.mkdirs()) {
+            copyFiles(context)
+        }
+        if (dir.exists()) {
+            val dataFilePath = dataPath + TESS_TRAINED_DATA
+            val datafile = File(dataFilePath)
+            if (!datafile.exists()) {
+                copyFiles(context)
+            }
+        }
+    }
+
+    private fun copyFiles(context: Context) {
+        try {
+            val filePath = context.filesDir.toString() + File.separator + TESS_DATA_DIR + TESS_TRAINED_DATA
+
+            val inputStream = context.assets.open(TESS_DATA_DIR + TESS_TRAINED_DATA)
+            val outStream = FileOutputStream(filePath)
+
+            val buffer = ByteArray(1024)
+            var read = 0
+            while (inputStream.read(buffer).let { read = it; it>0 }) {
+                Log.d("copy",read.toString())
+                outStream.write(buffer, 0, read)
+            }
+            outStream.flush()
+            outStream.close()
+            inputStream.close()
+
+            val file = File(filePath)
+            if (!file.exists()) {
+                throw FileNotFoundException()
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
     }
 
     private fun checkPermission() {

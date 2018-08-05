@@ -10,11 +10,7 @@ import android.os.IBinder
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
 import com.chihayastudio.shinyproject.R
-import com.chihayastudio.shinyproject.manager.FloatManager
-import android.content.Context.WINDOW_SERVICE
 import android.graphics.Bitmap
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
@@ -33,6 +29,7 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
+import com.googlecode.tesseract.android.TessBaseAPI
 
 
 class FloatService : Service() {
@@ -63,6 +60,7 @@ class FloatService : Service() {
     private lateinit var mFloatView: ImageButton
 
     private val TAG = "MainActivity"
+    private val LANG = "jpn"
 
     override fun onBind(intent: Intent?): IBinder {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -72,7 +70,6 @@ class FloatService : Service() {
         createFloatView()
 
         createVirtualEnvironment()
-
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -197,6 +194,16 @@ class FloatService : Service() {
         Log.i(TAG, "image data captured")
 
         if (bitmap != null) {
+            var DATA_PATH = applicationContext.filesDir.toString()
+            Log.d("DATA_PATH",DATA_PATH)
+            val baseApi = TessBaseAPI()
+            baseApi.init(DATA_PATH, LANG)
+            baseApi.setImage(bitmap)
+            val recognizedText = baseApi.utF8Text
+            baseApi.end()
+
+            Log.d("recognizedText", recognizedText)
+
             try {
                 val fileImage = File(nameImage)
                 if (!fileImage.exists()) {
