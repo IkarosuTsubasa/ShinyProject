@@ -129,8 +129,8 @@ class MainFragment : Fragment() {
 
             val buffer = ByteArray(1024)
             var read = 0
-            while (inputStream.read(buffer).let { read = it; it>0 }) {
-                Log.d("copy",read.toString())
+            while (inputStream.read(buffer).let { read = it; it > 0 }) {
+                Log.d("copy", read.toString())
                 outStream.write(buffer, 0, read)
             }
             outStream.flush()

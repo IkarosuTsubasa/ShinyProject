@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "438866253304",
+    "firebase_url": "https://shinyproject-2c90f.firebaseio.com",
+    "project_id": "shinyproject-2c90f",
+    "storage_bucket": "shinyproject-2c90f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438866253304:android:d5956c5086448e7b",
+        "android_client_info": {
+          "package_name": "com.chihayastudio.shinyproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "438866253304-45mac8b4ahek9m19rmdc3e1r16k2ahar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1rnpTj73qqSyCr5sNhhR23ZKJ4K6N1SQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

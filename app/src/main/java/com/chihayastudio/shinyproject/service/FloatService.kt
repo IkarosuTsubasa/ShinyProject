@@ -26,6 +26,7 @@ import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.view.LayoutInflater
 import android.widget.TextView
+import com.chihayastudio.shinyproject.DialogActivity
 import com.chihayastudio.shinyproject.ShotApplication
 import java.io.File
 import java.io.FileNotFoundException
@@ -77,17 +78,17 @@ class FloatService : Service() {
     }
 
     private fun createNotification(intent: Intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val context = applicationContext
-            val channelId = "shiny"
-            val title = context.getString(R.string.app_name)
 
-            var pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-            var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "shiny"
+            val title = applicationContext.getString(R.string.app_name)
+
+            var pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            var notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             var channel = NotificationChannel(channelId, title, NotificationManager.IMPORTANCE_DEFAULT)
 
             notificationManager.createNotificationChannel(channel)
-            var notification = Notification.Builder(context, channelId)
+            var notification = Notification.Builder(applicationContext, channelId)
                     .setContentTitle(title)
                     .setSmallIcon(R.drawable.ic_stat_name)
                     .setContentText("シャニマススキャンが動いてる")
@@ -244,7 +245,11 @@ class FloatService : Service() {
             baseApi.end()
 
             Log.d("recognizedText", recognizedText)
-
+            if (recognizedText != null) {
+                val intent = Intent(this, DialogActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                application.startActivity(intent)
+            }
 //            try {
 //                val fileImage = File(nameImage)
 //                if (!fileImage.exists()) {
